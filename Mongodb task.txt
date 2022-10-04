@@ -8,7 +8,7 @@ Answer: db.products.find({$and:[{product_price:{$gt:400}},{product_price:{$lt:80
 Answer: db.products.find({$not:[{product_price:{$gt:400}},{product_price:{$lt:800}}]}).pretty()
 
 4. List the four product which are grater than 500 in price
-Answer: db.products.findMany({product_price:{$gt:500}}) 
+Answer: db.products.findMany({product_price:{$gt:500}}).limit(4)
 
 5. Find the product name and product material of each products
 Answer: db.products.find({$and:[{product_name},{product_material}]})
@@ -26,5 +26,5 @@ Answer: db.products.find({product_material:"Soft"})
 Answer: db.products.find({$and:[{product_color:"indigo"},{product_price:"492.00"}]}) 
 
 10. Delete the products which product price value are same
-Answer: db.products.aggregate([ { "$group":{ id:{product_price:"$product_price"}, DuplicateIds:{$addToSet:"$id"} } } ]);
+Answer: db.collection.aggregate([ { "$group": { "_id": { product_price: "$product_price" }, total: { $sum: 1 } } }, { $match: { total: { $gt: 1 } } } ]).map(val=> db.collection.deleteMany({"product_price": val._id.product_price}))
 
